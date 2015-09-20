@@ -12,9 +12,13 @@ TARGET = Excel
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp
+SOURCES += main.cpp \
+    ExcelModel.cpp \
+    ExcelViewDialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += \
+    ExcelModel.h \
+    ExcelViewDialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    ExcelViewDialog.ui
