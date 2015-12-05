@@ -17,8 +17,9 @@ class ExcelViewDialog : public QDialog
 
 public:
     ExcelViewDialog(int row_count, int column_count, QWidget *parent = 0);
-    QTextBrowser* cellNameView();
-    QTextEdit* cellValueView();
+    QTextBrowser* cellNameView() const;
+    QTextBrowser* logger() const;
+    QTableWidget* tableWidget() const;
 
     ~ExcelViewDialog();
 
@@ -30,14 +31,16 @@ private:
 public Q_SLOTS:
     void cellPressed(int row, int column);
     void cellChanged(int row, int column);
-    void valueViewTextChanged();
+
+Q_SIGNALS:
+    void run(const QString& message);
 
 
 private:
     Ui::ExcelViewDialog* ui_;
     QTableWidget* tableWidget_;
     QTextBrowser* nameView_;
-    QTextEdit* valueView_;
+    QTextBrowser* logger_;
 };
 
 #endif // EXCELVIEWDIALOG_H

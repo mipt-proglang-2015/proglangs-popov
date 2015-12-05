@@ -68,6 +68,16 @@
    <item row="1" column="0">
     <widget class="QTableWidget" name="tableWidget"/>
    </item>
+   <item row="2" column="0">
+    <widget class="QTextBrowser" name="loggerView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

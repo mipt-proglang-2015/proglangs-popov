@@ -12,7 +12,7 @@ ExcelViewDialog::ExcelViewDialog(int row_count, int column_count, QWidget *paren
 
     nameView_ = ui_->cellNameView;
 
-    valueView_ = ui_->cellValueView;
+    logger_ = ui_->loggerView;
 
     tableWidget_->setRowCount(row_count);
 
@@ -25,17 +25,21 @@ ExcelViewDialog::ExcelViewDialog(int row_count, int column_count, QWidget *paren
     QObject::connect(tableWidget_, SIGNAL(cellPressed(int,int)), this, SLOT(cellPressed(int, int)));
     QObject::connect(tableWidget_, SIGNAL(cellEntered(int,int)), this, SLOT(cellPressed(int, int)));
     QObject::connect(tableWidget_, SIGNAL(cellChanged(int, int)), this, SLOT(cellChanged(int, int)));
-    QObject::connect(valueView_, SIGNAL(textChanged()), this, SLOT(valueViewTextChanged()));
 }
 
-QTextBrowser* ExcelViewDialog::cellNameView()
+QTextBrowser* ExcelViewDialog::cellNameView() const
 {
     return nameView_;
 }
 
-QTextEdit* ExcelViewDialog::cellValueView()
+QTextBrowser* ExcelViewDialog::logger() const
 {
-    return valueView_;
+    return logger_;
+}
+
+QTableWidget* ExcelViewDialog::tableWidget() const
+{
+    return tableWidget_;
 }
 
 ExcelViewDialog::~ExcelViewDialog()
@@ -85,12 +89,7 @@ void ExcelViewDialog::cellPressed(int row, int column)
 
 void ExcelViewDialog::cellChanged(int row, int column)
 {
-    valueView_->setText(tableWidget_->item(row, column)->text());
+    const QString programText = tableWidget_->item(row, column)->text();
+    emit run(programText);
 }
 
-void ExcelViewDialog::valueViewTextChanged()
-{
-    QObject::disconnect(tableWidget_, SIGNAL(cellChanged(int, int)), this, SLOT(cellChanged(int, int)));
-    tableWidget_->currentItem()->setText(valueView_->toPlainText());
-    QObject::connect(tableWidget_, SIGNAL(cellChanged(int, int)), this, SLOT(cellChanged(int, int)));
-}
