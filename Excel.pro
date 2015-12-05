@@ -13,12 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    ExcelModel.cpp \
     ExcelViewDialog.cpp
 
 HEADERS  += \
-    ExcelModel.h \
-    ExcelViewDialog.h
+    ExcelViewDialog.h \
+    Constants.h
 
 FORMS    += \
     ExcelViewDialog.ui

@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    ExcelViewDialog dialog(10, 10);
-    dialog.show();
-    return a.exec();
+    ExcelViewDialog* dialog = new ExcelViewDialog(100, 100);
+    dialog->show();
+    a.exec();
 }
