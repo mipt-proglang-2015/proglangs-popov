@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     interpreter->setActor(actor);
     actor->setExcelView(dialog);
     QObject::connect(dialog, SIGNAL(run(QString)), interpreter, SLOT(run(QString)));
+    QObject::connect(dialog, SIGNAL(addVariable(QString,QString)), interpreter, SLOT(addVariable(QString,QString)));
     QObject::connect(interpreter, SIGNAL(logMessage(QString)), dialog->logger(), SLOT(append(QString)));
     dialog->show();
 

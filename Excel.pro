@@ -35,4 +35,5 @@ FORMS    += \
     ExcelViewDialog.ui
 
 OTHER_FILES += \
-    Excel.pro.user
+    Excel.pro.user \
+    test.txt

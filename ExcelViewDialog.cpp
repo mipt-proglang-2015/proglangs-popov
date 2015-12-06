@@ -84,12 +84,13 @@ QString ExcelViewDialog::getHeaderLabel(int index) const
 
 void ExcelViewDialog::cellPressed(int row, int column)
 {
-    nameView_->setText(getHeaderLabel(column));
+    nameView_->setText(getHeaderLabel(column) + QString::number(row + 1));
 }
 
 void ExcelViewDialog::cellChanged(int row, int column)
 {
     const QString programText = tableWidget_->item(row, column)->text();
     emit run(programText);
+    emit addVariable(getHeaderLabel(column) + QString::number(row + 1), tableWidget_->currentItem()->text());
 }
 

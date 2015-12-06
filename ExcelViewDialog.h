@@ -34,6 +34,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void run(const QString& message);
+    void addVariable(const QString& name, const QString& value);
 
 
 private:

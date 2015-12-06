@@ -1,0 +1,9 @@
+def sum():
+    ans = ""
+    ans += A1
+    ans += B2
+    ans = ans + C3
+    ans += D4
+    return ans
+
+print(sum())

@@ -28,6 +28,13 @@ private:
     static PyObject* printToCell(PyObject* self, PyObject* args);
 
     static QMap<PyThreadState*, PythonInterpreter*> m_interpreters;
+    static QMap<QString, QString> m_variables;
+    static PyMethodDef methods[];
+    static PyModuleDef module;
+
+public Q_SLOTS:
+    void run(const QString& program);
+    void addVariable(const QString& name, const QString& value);
 };
 
 #endif // PYTHONINTERPRETER_H

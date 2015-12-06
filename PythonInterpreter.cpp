@@ -25,7 +25,6 @@ void PythonInterpreter::evaluateProgram(const QString &program)
 {
     const QByteArray utf8_program = program.toUtf8();
     PyRun_SimpleString(utf8_program.constData());
-
 }
 
 int PythonInterpreter::trace(PyObject*, PyFrameObject*,
@@ -41,61 +40,107 @@ int PythonInterpreter::trace(PyObject*, PyFrameObject*,
         Py_DECREF(message);
         PyErr_Print();
     }
-    if (_this->isTerminating())
+    else if(PyTrace_RETURN == what)
     {
-        PyErr_SetInterrupt();
+        return 0;
     }
     return 0;
 }
 
 PyObject* PythonInterpreter::createActorModuleWrapper()
 {
-    static PyMethodDef methods[] = {
-        {"Print", printToCell, METH_VARARGS, "Print output of programm"},
-        {NULL, NULL, 0, NULL}
-    };
-
-    static PyModuleDef module = {
-        PyModuleDef_HEAD_INIT,
-        "Actor",
-        "Control python programm",
-        -1, methods,
-        NULL, NULL, NULL
-    };
-
     PyObject* moduleObject = PyModule_Create(&module);
+    PyObject* moduleDict = PyModule_GetDict(moduleObject);
+    QMapIterator<QString, QString> iterator(m_variables);
+    while (iterator.hasNext())
+    {
+        iterator.next();
+        PyObject* Variabe = PyUnicode_FromString(iterator.value().toUtf8().toStdString().c_str());
+        Py_INCREF(Variabe);
+        PyDict_SetItemString(moduleDict, iterator.key().toUtf8().toStdString().c_str() , Variabe);
+    }
     return moduleObject;
 }
 
 PyObject* PythonInterpreter::printToCell(PyObject* , PyObject* args)
 {
-    QString text;
-    PythonInterpreter * _this = m_interpreters[PyThreadState_Get()];
-    char* outString;
-    int statusString = PyArg_ParseTuple(args, "s", &outString);
-    if (!statusString)
+    QString text = "";
+    PythonInterpreter* _this = m_interpreters[PyThreadState_Get()];
+    if (PyTuple_Size(args) < 1)
     {
-        int outInt;
-        int statusInt = PyArg_ParseTuple(args, "i", &outInt);
-        if (!statusInt)
+        PyErr_BadArgument();
+        return NULL;
+    }
+
+    for (int index = 0; index < PyTuple_Size(args); ++ index)
+    {
+        PyObject* arg = PyTuple_GetItem(args, index);
+        if (PyUnicode_Check(arg))
+        {
+            PyObject* string_bytes = PyUnicode_AsEncodedString(arg, "ASCII", "strict");
+            if (string_bytes != NULL)
+            {
+                text = text + " " + QString(strdup(PyBytes_AsString(string_bytes)));
+                Py_DECREF(string_bytes);
+            }
+            else
+            {
+                PyErr_BadArgument();
+                return NULL;
+            }
+        }
+        else if(PyLong_Check(arg))
+        {
+            text = text + " " + QString::number(PyLong_AsLong(arg));
+        }
+        else if(PyFloat_Check(arg))
+        {
+            text = text + " " + QString::number(PyFloat_AsDouble(arg));
+        }
+        else
         {
             PyErr_BadArgument();
             return NULL;
         }
-        else
-        {
-            text = QString::number(outInt);
-        }
-    }
-    else
-    {
-        text = QString(outString);
     }
     _this->m_actor->printToCell(text);
     Py_INCREF(Py_None);
     return Py_None;
 }
 
+void PythonInterpreter::run(const QString &program)
+{
+    reset();
+    initializeInterpeter();
+    evaluateProgram(program);
+    if (errorMessage().length() > 0)
+    {
+        emit logMessage(errorMessage() + "\n");
+    }
+    finalizeInterpreter();
+}
+
+void PythonInterpreter::addVariable(const QString& name, const QString& value)
+{
+    m_variables.insert(name, value);
+}
+
+
 QMap<PyThreadState*, PythonInterpreter*> PythonInterpreter::m_interpreters;
+QMap<QString, QString> PythonInterpreter::m_variables;
+
+
+PyMethodDef PythonInterpreter::methods[] = {
+    {"print", printToCell, METH_VARARGS, "Print output of programm"},
+    {NULL, NULL, 0, NULL}
+};
+
+PyModuleDef PythonInterpreter::module = {
+    PyModuleDef_HEAD_INIT,
+    "Actor",
+    "Control python programm",
+    -1, methods,
+    NULL, NULL, NULL
+};
 
 REGISTER_INTERPRETER(PythonInterpreter)
