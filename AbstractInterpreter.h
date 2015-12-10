@@ -4,7 +4,7 @@
 #include <QString>
 #include <QMutex>
 #include <QMap>
-#include "Actor.h"
+#include <QObject>
 
 
 class AbstractInterpreter : public QObject
@@ -12,7 +12,6 @@ class AbstractInterpreter : public QObject
     Q_OBJECT
 
 public:
-    void setActor(Actor* actor);
     virtual void initializeInterpeter() = 0;
     virtual void finalizeInterpreter() = 0;
     virtual void evaluateProgram(const QString& program) = 0;
@@ -23,10 +22,10 @@ public:
 protected:
     explicit AbstractInterpreter();
     QString m_errorMessage;
-    Actor* m_actor;
 
 Q_SIGNALS:
     void logMessage(const QString& message);
+    void printToFocusedCell(const QString& text);
 
 public Q_SLOTS:
     virtual void run(const QString& program) = 0;

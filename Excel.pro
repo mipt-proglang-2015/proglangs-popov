@@ -12,24 +12,21 @@ TARGET = Excel
 TEMPLATE = app
 
 INCLUDEPATH += /usr/include/python3.4m
-LIBS += -L/usr/lib/x86_64-linux-gnu
-LIBS += -Wl,-Bstatic -lpython3.4m -Wl,-Bdynamic
-LIBS += -lz -lexpat -ldl -lutil
+LIBS += -lpython3.4m -lpthread -ldl  -lutil -lm  -Xlinker -export-dynamic
+
 
 SOURCES += main.cpp \
     ExcelViewDialog.cpp \
     AbstractInterpreter.cpp \
     InterpreterFactory.cpp \
-    PythonInterpreter.cpp \
-    Actor.cpp
+    PythonInterpreter.cpp
 
 HEADERS  += \
     ExcelViewDialog.h \
     Constants.h \
     AbstractInterpreter.h \
     InterpreterFactory.h \
-    PythonInterpreter.h \
-    Actor.h
+    PythonInterpreter.h
 
 FORMS    += \
     ExcelViewDialog.ui

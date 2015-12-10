@@ -24,13 +24,10 @@ private:
     static int trace(PyObject* self, PyFrameObject* frame,
                      int what, PyObject* arg);
 
-    static PyObject* createActorModuleWrapper();
-    static PyObject* printToCell(PyObject* self, PyObject* args);
-
     static QMap<PyThreadState*, PythonInterpreter*> m_interpreters;
-    static QMap<QString, QString> m_variables;
-    static PyMethodDef methods[];
-    static PyModuleDef module;
+    static QMap<QString, PyObject*> m_variables;
+    static PyObject* mainModule;
+    static PyObject* moduleDict;
 
 public Q_SLOTS:
     void run(const QString& program);

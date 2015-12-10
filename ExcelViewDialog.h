@@ -31,6 +31,7 @@ private:
 public Q_SLOTS:
     void cellPressed(int row, int column);
     void cellChanged(int row, int column);
+    void printToFocusedCell(const QString& text);
 
 Q_SIGNALS:
     void run(const QString& message);

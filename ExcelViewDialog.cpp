@@ -89,8 +89,21 @@ void ExcelViewDialog::cellPressed(int row, int column)
 
 void ExcelViewDialog::cellChanged(int row, int column)
 {
-    const QString programText = tableWidget_->item(row, column)->text();
-    emit run(programText);
+    const QString text = tableWidget_->item(row, column)->text();
+    if(text.at(0) == '=')
+    {
+        const QString programm = text.mid(1);
+        emit run(programm);
+    }
     emit addVariable(getHeaderLabel(column) + QString::number(row + 1), tableWidget_->currentItem()->text());
+}
+
+void ExcelViewDialog::printToFocusedCell(const QString &text)
+{
+    QObject::disconnect(tableWidget_, SIGNAL(cellChanged(int, int)),
+                        this, SLOT(cellChanged(int, int)));
+    tableWidget_->currentItem()->setText(text);
+    QObject::connect(tableWidget_, SIGNAL(cellChanged(int, int)),
+                     this, SLOT(cellChanged(int, int)));
 }
 
